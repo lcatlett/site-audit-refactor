@@ -10,7 +10,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  * @SiteAuditCheck(
  *  id = "best_practices_services",
  *  name = @Translation("sites/default/services.yml"),
- *  description = @Translation("Check if the services file exists."),
+ *  description = @Translation("Check if a site-specific services.yml file exists."),
  *  report = "best_practices"
  * )
  */
@@ -19,9 +19,7 @@ class BestPracticesServices extends SiteAuditCheckBase {
   /**
    * {@inheritdoc}.
    */
-  public function getResultFail() {
-    return $this->t('services.yml does not exist! Copy the default.service.yml to services.yml and see https://www.drupal.org/documentation/install/settings-file for details.');
-  }
+  public function getResultFail() {}
 
   /**
    * {@inheritdoc}.
@@ -32,14 +30,14 @@ class BestPracticesServices extends SiteAuditCheckBase {
    * {@inheritdoc}.
    */
   public function getResultPass() {
-    return $this->t('services.yml exists and is not a symbolic link.');
+    return $this->t('No site-specific services.yml file has been created.');
   }
 
   /**
    * {@inheritdoc}.
    */
   public function getResultWarn() {
-    return $this->t('sites/default/services.yml is a symbolic link.');
+    return $this->t('Site-specific services.yml in use.');
   }
 
   /**
@@ -47,10 +45,7 @@ class BestPracticesServices extends SiteAuditCheckBase {
    */
   public function getAction() {
     if ($this->score == SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN) {
-      return $this->t('Don\'t rely on symbolic links for core configuration files; copy services.yml where it should be and remove the symbolic link.');
-    }
-    if ($this->score == SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL) {
-      return $this->t('Create services.yml file inside sites/default directory by copying default.services.yml file. See https://www.drupal.org/documentation/install/settings-file for details.');
+      return $this->t('Use of a site-specific services.yml is unnecessary for most sites, and can cause issues as it overrides core.services.yml. See https://www.drupal.org/project/drupal/issues/2547447.');
     }
   }
 
@@ -58,13 +53,11 @@ class BestPracticesServices extends SiteAuditCheckBase {
    * {@inheritdoc}.
    */
   public function calculateScore() {
+    // Check if the services.yml file exists.
     if (file_exists(DRUPAL_ROOT . '/sites/default/services.yml')) {
-      if (is_link(DRUPAL_ROOT . '/sites/default/services.yml')) {
-        return SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN;
-      }
-      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS;
+      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN;
     }
-    return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
+    return SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS;
   }
 
 }
