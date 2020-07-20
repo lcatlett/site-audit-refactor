@@ -56,26 +56,33 @@ class StatusSystem extends SiteAuditCheckBase {
         $severity = 'Error';
         $class = 'error';
       }
-
-      $ret_val = [
-        '#theme' => 'table',
-        '#header' => [
-          $this->t('Title'),
-          $this->t('Severity'),
-          $this->t('Value'),
-        ],
-        '#rows' => [],
+      $value = isset($requirement['value']) && $requirement['value'] ? $requirement['value'] : ' ';
+      $item = [
+        'title' => $requirement['title'],
+        'severity' => $severity,
+        'value' => $value,
+        'class' => $class,
       ];
-      foreach ($items as $item) {
-        $ret_val['#rows'][] = [
-          'attributes' => ['class' => $item['class']],
-          'data' => [
-            $item['title'],
-            $item['severity'],
-            $item['value'],
-          ],
-        ];
-      }
+      $items[] = $item;
+    }
+    $ret_val = [
+      '#theme' => 'table',
+      '#header' => [
+        $this->t('Title'),
+        $this->t('Severity'),
+        $this->t('Value'),
+      ],
+      '#rows' => [],
+    ];
+    foreach ($items as $item) {
+      $ret_val['#rows'][] = [
+        'attributes' => ['class' => $item['class']],
+        'data' => [
+          $item['title'],
+          $item['severity'],
+          $item['value'],
+        ],
+      ];
     }
     return $ret_val;
   }
