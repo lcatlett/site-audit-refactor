@@ -54,7 +54,7 @@ class BestPracticesFolderStructure extends SiteAuditCheckBase {
   public function getAction() {
     $message = '';
     if ($this->score == SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN) {
-      if (!$this->registry->contrib && !$this->registry['custom']) {
+      if (!$this->registry->contrib && !$this->registry->custom) {
         $message .= $this->t('Put all the contrib modules inside the ./modules/contrib directory and custom modules inside the ./modules/custom directory.');
       }
       elseif (!$this->registry->contrib) {
