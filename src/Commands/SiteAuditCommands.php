@@ -41,21 +41,27 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
    * @option detail
    *   Show details when no issues found for the check.
    * @option bootstrap
-   *   Wrap the report in HTML with Bootstrap derived styles.
+   *   Wrap the report in HTML with Bootstrap derived styles. Forces --format=html
    * @usage site_audit:audit
    *   Run all Site Audit reports
    *
    * @command site_audit:audit
    * @aliases audit
-   * @usage
-   *   audit watchdog
-   * @usage
-   *   audit --skip=block,status
+   *
+   * @usage audit watchdog
+   *   only run the watchdog report
+   * @usage audit --skip=block,status
+   *  skip the block and status reports
    */
   public function audit($report, $options = ['skip' => 'none', 'format' => 'text', 'detail' => FALSE, 'bootstrap' => FALSE]) {
+    if ($options['bootstrap']) {
+      // bootstrap implies html
+      $options['format'] = 'html';
+    }
     $boot_manager = Drush::bootstrapManager();
 
-    $output = $this->getOutput();
+    $output = $this->output();
+    $out = '';
     $reportManager = \Drupal::service('plugin.manager.site_audit_report');
     $reportDefinitions = $reportManager->getDefinitions();
 
@@ -98,7 +104,8 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
       default:
         foreach ($reports as $report) {
           $renderer = new Console($report, $this->logger, $options, $output);
-          $out .= $renderer->render(TRUE);
+          // the Console::renderer() doens't return anything, it print directly to the console.
+          $renderer->render(TRUE);
         }
         break;
     }
@@ -108,6 +115,9 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
 
   /**
    * Take Drupal\Core\StringTranslation\TranslatableMarkup and return the string.
+   * @param $message
+   * @param array $context
+   * @return string
    */
   public function interpolate($message, array $context = []) {
     if (get_class($message) == 'Drupal\Core\StringTranslation\TranslatableMarkup') {
@@ -118,6 +128,9 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
 
   /**
    * @hook interact site_audit:audit
+   * @param $input
+   * @param $output
+   * @throws \Drush\Exceptions\UserAbortException
    */
   public function interactSiteAudit($input, $output) {
     $boot_manager = Drush::bootstrapManager();
@@ -135,7 +148,7 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   }
 
   /**
-   *
+   * get a list of all the report definitions
    */
   public function getReports($include_bootstrapped_types = FALSE) {
     $reportManager = \Drupal::service('plugin.manager.site_audit_report');
