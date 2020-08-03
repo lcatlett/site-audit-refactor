@@ -75,8 +75,17 @@ class StatusSystem extends SiteAuditCheckBase {
       '#rows' => [],
     ];
     foreach ($items as $item) {
+      $classes = [$item['class']];
+      switch ($item['class']) {
+        case 'warning':
+          $classes[] = 'label-warning';
+          break;
+        case 'error':
+          $classes[] = 'label-danger';
+          break;
+      }
       $ret_val['#rows'][] = [
-        'attributes' => ['class' => $item['class']],
+        'class' => implode(' ', $classes),
         'data' => [
           $item['title'],
           $item['severity'],
