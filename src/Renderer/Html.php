@@ -274,7 +274,11 @@ class Html extends Renderer {
       foreach ($report->getCheckObjects() as $check) {
         $checkBuild = [];
         $score = $check->getScore();
-        if ($this->options['detail'] || $score < SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS || $percent == SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO) {
+        if (
+          $this->options['detail'] || // detail is required
+          $score < SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS || // this check didn't pass
+          $percent == SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO // info needs to be returned
+        ) {
           // Heading.
           $checkBuild['panel']['panel_heading'] = [
             '#type' => 'html_tag',
@@ -330,16 +334,17 @@ class Html extends Renderer {
               $checkBuild['action']['rendered'] = $action;
             }
           }
+          $build[$check->getPluginId()] = [
+            '#type' => 'html_tag',
+            '#tag' => 'div',
+            //'#value' => '<strong>' . $this->t('Well done!') . '</strong> ' . $this->t('No action required.'),
+            '#attributes' => [
+              'class' => 'panel panel-' . $this->getScoreCssClass($check->getScore()),
+              'id' => 'check-' . $check->getPluginId(),
+            ],
+            $checkBuild,
+          ];
         }
-        $build[$check->getPluginId()] = [
-          '#type' => 'html_tag',
-          '#tag' => 'div',
-          // '#value' => '<strong>' . $this->t('Well done!') . '</strong> ' . $this->t('No action required.'),.
-          '#attributes' => [
-            'class' => 'panel panel-' . $this->getScoreCssClass($check->getScore()),
-          ],
-          $checkBuild,
-        ];
       }
     }
     return $build;
