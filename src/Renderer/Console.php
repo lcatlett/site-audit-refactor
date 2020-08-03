@@ -10,6 +10,7 @@ use Drush\Utils\StringUtils;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Terminal;
 
 /**
@@ -232,11 +233,37 @@ class Console extends Renderer {
     if ($section) {
       $this->output->writeln($this->formatter->formatSection($section, $element['#title']));
     }
+    // make sure the table headers and rows have no translatable objects
+    $headers = $element['#header'] ?: $element['headers'];
+    foreach ($headers AS &$header) {
+      if (is_object($header)) {
+        $header = (string) $header;
+      }
+    }
+    $rows = $element['#rows'] ?: [];
+    if (!empty($rows)) {
+      if (isset($rows['attributes']) && isset($rows['attributes']['class'])) {
+        $class = $rows['attributes']['class'];
+      }
+      else {
+        $class = NULL;
+      }
+      foreach ($rows AS &$row) {
+        if (isset($row['data'])) {
+          $row = $row['data'];
+        }
+        foreach ($row AS &$cell) {
+          if (is_object($cell)) {
+            $cell = (string) $cell;
+          }
+        }
+      }
+    }
     // Theme as a table.
     $table = new Table($this->output);
     $table
-      ->setHeaders($element['#header'] ?: $element['headers'])
-      ->setRows($element['#rows'] ?: []);
+      ->setHeaders($headers)
+      ->setRows($rows);
 
     $this->output->writeln($table->render());
   }
