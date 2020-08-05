@@ -8,7 +8,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  * Provides the BestPracticesSitesSuperfluous Check.
  *
  * @SiteAuditCheck(
- *  id = "best_practices_fast_404",
+ *  id = "best_practices_sites_superflouous",
  *  name = @Translation("Superfluous files in /sites"),
  *  description = @Translation("Detect unnecessary files."),
  *  report = "best_practices"

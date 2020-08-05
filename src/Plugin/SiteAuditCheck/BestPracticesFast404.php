@@ -45,7 +45,7 @@ class BestPracticesFast404 extends SiteAuditCheckBase {
    */
   public function getAction() {
     if ($this->score == SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN) {
-      return $this->t('See https://github.com/drupal/drupal/blob/8.0.x/sites/default/default.settings.php#L572 for details on how to implement.');
+      return $this->t('See https://git.drupalcode.org/project/drupal/-/blob/9.1.x/sites/default/default.settings.php#L617-642 for details on how to implement, <a href="https://support.hypernode.com/knowledgebase/magento-and-smarter-404-handling/">unless this is already being done by your Web server</a> (e.g. Aegir with Nginx).');
     }
   }
 

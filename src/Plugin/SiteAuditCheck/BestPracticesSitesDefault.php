@@ -8,7 +8,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  * Provides the BestPracticesSitesDefault Check.
  *
  * @SiteAuditCheck(
- *  id = "best_practices_fast_404",
+ *  id = "best_practices_sites_default",
  *  name = @Translation("sites/default"),
  *  description = @Translation("Check if it exists and isn\'t symbolic"),
  *  report = "best_practices"
@@ -34,7 +34,7 @@ class BestPracticesSitesDefault extends SiteAuditCheckBase {
    * {@inheritdoc}.
    */
   public function getResultPass() {
-    return $this->t('Fast 404 pages are enabled.');
+    return $this->getResultInfo();
   }
 
   /**
