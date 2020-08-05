@@ -54,9 +54,9 @@ class CodebaseSizeAll extends SiteAuditCheckBase {
    */
   public function calculateScore() {
     try {
-      exec('du -s -x ' . DRUPAL_ROOT, $result);dpm($result, '$result');
+      exec('du -s -x ' . DRUPAL_ROOT, $result);
       $this->registry->size_all_kb = trim(explode("\t", $result[0])[0]);
-      if (!$this->registry->size_all_kb) {
+      if (!$this->registry->size_all_kb && !is_numeric($this->registry->size_all_kb)) {
         $this->abort = TRUE;
         return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
       }
