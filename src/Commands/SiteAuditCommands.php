@@ -29,7 +29,7 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   use StringTranslationTrait;
 
   /**
-   * Run Site Audit report.
+   * Run a Site Audit report.
    *
    * @param $report
    *   The particular report to run. Omit this argument to choose from available reports.
@@ -114,6 +114,34 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   }
 
   /**
+   * Run All Site Audit reports.
+   *
+   * @param $report
+   *   The particular report to run. Omit this argument to choose from available reports.
+   *
+   * @option format
+   *   Format you which the report is to be in (html, text, json, markdown)
+   * @option detail
+   *   Show details when no issues found for the check.
+   * @option bootstrap
+   *   Wrap the report in HTML with Bootstrap derived styles. Forces --format=html
+   * @usage site_audit:audit-all
+   *   Run all Site Audit reports
+   *
+   * @command site_audit:all
+   * @aliases audit-all
+   * @aliases aa
+   *
+   * @usage audit-all
+   *   run all reports
+   * @usage audit-all --skip=block,status
+   *  skip the block and status reports
+   */
+  public function audit_all($report, $options = ['skip' => 'none', 'format' => 'text', 'detail' => FALSE, 'bootstrap' => FALSE]) {
+    $this->audit($options);
+  }
+
+  /**
    * Take Drupal\Core\StringTranslation\TranslatableMarkup and return the string.
    * @param $message
    * @param array $context
@@ -157,7 +185,7 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   }
 
   /**
-   * Generate a list of all available reports.
+   * List of all available reports.
    *
    * @field-labels
    *   report_id: Report ID
