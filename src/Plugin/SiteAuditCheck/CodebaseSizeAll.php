@@ -29,13 +29,8 @@ class CodebaseSizeAll extends SiteAuditCheckBase {
    */
   public function getResultInfo() {
 
-    if ($this->registry->size_all_kb < 1024) {
-      return $this->t('Total size: @size_all_kbkB', [
-        '@size_all_kb' => number_format($this->registry->size_all_kb),
-      ]);
-    }
-    return $this->t('Total size: @size_all_mbMB', [
-      '@size_all_mb' => number_format($this->registry->size_all_kb / 1024, 2),
+    return $this->t('Total size: @size_all', [
+      '@size_all' => human_filesize($this->registry->size_all_kb * 1024),
     ]);
   }
 
@@ -59,8 +54,8 @@ class CodebaseSizeAll extends SiteAuditCheckBase {
    */
   public function calculateScore() {
     try {
-      exec('du -s -k -x ' . DRUPAL_ROOT, $result);
-      $this->registry->size_all_kb = trim($result[0]);
+      exec('du -s -x ' . DRUPAL_ROOT, $result);dpm($result, '$result');
+      $this->registry->size_all_kb = trim(explode("\t", $result[0])[0]);
       if (!$this->registry->size_all_kb) {
         $this->abort = TRUE;
         return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;

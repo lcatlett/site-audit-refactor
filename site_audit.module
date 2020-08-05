@@ -41,3 +41,24 @@ function site_audit_env_is_dev() {
 
   return FALSE;
 }
+
+if (!function_exists('human_filesize')) {
+  /**
+   * create the human readable file size
+   * @see https://gist.github.com/liunian/9338301
+   *
+   * @param $size
+   * @param int $precision
+   * @return string
+   */
+  function human_filesize($size, $precision = 2) {
+    static $units = array('B','KB','MB','GB','TB','PB','EB','ZB','YB');
+    $step = 1024;
+    $i = 0;
+    while (($size / $step) > 0.9) {
+      $size = $size / $step;
+      $i++;
+    }
+    return round($size, $precision) . ' ' . $units[$i];
+  }
+}
