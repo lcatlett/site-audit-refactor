@@ -3,6 +3,7 @@
 namespace Drupal\site_audit\Plugin\SiteAuditCheck;
 
 use Drupal\site_audit\Plugin\SiteAuditCheckBase;
+use Drupal\views\Views;
 
 /**
  * Provides the ViewsCount Check.
@@ -62,8 +63,7 @@ class ViewsCount extends SiteAuditCheckBase {
   public function calculateScore() {
     $this->registry->views = [];
 
-    $all_views = \Drupal::service('entity_type.manager')->getListBuilder('view')->load();
-    foreach ($all_views['enabled'] as $view) {
+    foreach (Views::getEnabledViews() as $view) {
       $this->registry->views[] = $view;
     }
 
