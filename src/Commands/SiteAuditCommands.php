@@ -104,7 +104,7 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
       default:
         foreach ($reports as $report) {
           $renderer = new Console($report, $this->logger, $options, $output);
-          // the Console::renderer() doens't return anything, it print directly to the console.
+          // the Console::renderer() doesn't return anything, it prints directly to the console.
           $renderer->render(TRUE);
         }
         break;
@@ -115,9 +115,6 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
 
   /**
    * Run All Site Audit reports.
-   *
-   * @param $report
-   *   The particular report to run. Omit this argument to choose from available reports.
    *
    * @option format
    *   Format you which the report is to be in (html, text, json, markdown)
@@ -137,8 +134,8 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
    * @usage audit-all --skip=block,status
    *  skip the block and status reports
    */
-  public function audit_all($report, $options = ['skip' => 'none', 'format' => 'text', 'detail' => FALSE, 'bootstrap' => FALSE]) {
-    $this->audit($options);
+  public function audit_all($options = ['skip' => 'none', 'format' => 'text', 'detail' => FALSE, 'bootstrap' => FALSE]) {
+    return $this->audit('all', $options);
   }
 
   /**
