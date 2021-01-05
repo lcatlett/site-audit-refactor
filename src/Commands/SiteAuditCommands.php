@@ -2,6 +2,8 @@
 
 namespace Drupal\site_audit\Commands;
 
+use Drupal\site_audit\Plugin\SiteAuditCheckManager;
+use Drupal\site_audit\Plugin\SiteAuditReportManager;
 use Drupal\site_audit\Renderer\Html;
 use Drupal\site_audit\Renderer\Markdown;
 use Drupal\site_audit\Renderer\Json;
@@ -12,7 +14,6 @@ use Drush\Drush;
 use Psr\Log\LoggerAwareInterface;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
-use Robo\Common\IO;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Drush\Boot\AutoloaderAwareInterface;
@@ -27,6 +28,34 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   use CustomEventAwareTrait;
   use AutoloaderAwareTrait;
   use StringTranslationTrait;
+
+  /**
+   * The Site Audit Check manager.
+   *
+   * @var \Drupal\site_audit\Plugin\SiteAuditCheckManager
+   */
+  protected $auditCheckManager;
+
+  /**
+   * The Site Audit Report manager.
+   *
+   * @var \Drupal\site_audit\Plugin\SiteAuditReportManager
+   */
+  protected $auditReportManager;
+
+  /**
+   * Constructs the SiteAuditCommands.
+   *
+   * @param \Drupal\site_audit\Plugin\SiteAuditCheckManager $auditCheckManager
+   *   The Site Audit Check manager.
+   * @param \Drupal\site_audit\Plugin\SiteAuditReportManager $auditReportManager
+   *   The Site Audit Report manager.
+   */
+  public function __construct(SiteAuditCheckManager $auditCheckManager, SiteAuditReportManager $auditReportManager) {
+    parent::__construct();
+    $this->auditCheckManager = $auditCheckManager;
+    $this->auditReportManager = $auditReportManager;
+  }
 
   /**
    * Run a Site Audit report.
@@ -55,15 +84,14 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
    */
   public function audit($report, $options = ['skip' => 'none', 'format' => 'text', 'detail' => FALSE, 'bootstrap' => FALSE]) {
     if ($options['bootstrap']) {
-      // bootstrap implies html
+      // Bootstrap implies html.
       $options['format'] = 'html';
     }
     $boot_manager = Drush::bootstrapManager();
 
     $output = $this->output();
     $out = '';
-    $reportManager = \Drupal::service('plugin.manager.site_audit_report');
-    $reportDefinitions = $reportManager->getDefinitions();
+    $reportDefinitions = $this->auditReportManager->getDefinitions();
 
     $reports = [];
     if ($report == 'all') {
@@ -72,12 +100,12 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
       foreach ($reportDefinitions as $report) {
         $isSkipped = array_search($report['id'], $skipped);
         if ($isSkipped === FALSE) {
-          $reports[] = $reportManager->createInstance($report['id'], $options);
+          $reports[] = $this->auditReportManager->createInstance($report['id'], $options);
         }
       }
     }
     elseif (!empty($report)) {
-      $reports[] = $reportManager->createInstance($report, $options);
+      $reports[] = $this->auditReportManager->createInstance($report, $options);
     }
 
     switch ($options['format']) {
@@ -104,7 +132,7 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
       default:
         foreach ($reports as $report) {
           $renderer = new Console($report, $this->logger, $options, $output);
-          // the Console::renderer() doesn't return anything, it prints directly to the console.
+          // The Console::renderer() doesn't return anything, it print directly to the console.
           $renderer->render(TRUE);
         }
         break;
@@ -140,8 +168,10 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
 
   /**
    * Take Drupal\Core\StringTranslation\TranslatableMarkup and return the string.
+   *
    * @param $message
    * @param array $context
+   *
    * @return string
    */
   public function interpolate($message, array $context = []) {
@@ -173,11 +203,10 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   }
 
   /**
-   * get a list of all the report definitions
+   * Get a list of all the report definitions
    */
   public function getReports($include_bootstrapped_types = FALSE) {
-    $reportManager = \Drupal::service('plugin.manager.site_audit_report');
-    $reportDefinitions = $reportManager->getDefinitions();
+    $reportDefinitions = $this->auditReportManager->getDefinitions();
     return $reportDefinitions;
   }
 
@@ -199,17 +228,15 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
    * @return \Consolidation\OutputFormatters\StructuredData\RowsOfFields
    */
   public function list() {
-    $reportManager = \Drupal::service('plugin.manager.site_audit_report');
-    $reportDefinitions = $reportManager->getDefinitions();
-    $checkManager = \Drupal::service('plugin.manager.site_audit_check');
-    $checkDefinitions = $checkManager->getDefinitions();
+    $reportDefinitions = $this->auditReportManager->getDefinitions();
+    $checkDefinitions = $this->auditCheckManager->getDefinitions();
     $rows = [];
     $report_id = '';
     foreach ($reportDefinitions as $report) {
       if ($report_id != $report['id'] && !empty($report_id)) {
         $rows[] = [];
       }
-      $thisReport = $reportManager->createInstance($report['id']);
+      $thisReport = $this->auditReportManager->createInstance($report['id']);
       $checks = $thisReport->getChecksList();
       foreach ($checks as $check) {
         $rows[] = [
