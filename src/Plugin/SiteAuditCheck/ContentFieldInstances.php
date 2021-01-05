@@ -87,13 +87,25 @@ class ContentFieldInstances extends SiteAuditCheckBase {
           continue;
         }
         foreach ($description['bundles'] as $bundle) {
-          $query = \Drupal::entityQuery($entity);
-          if (!empty($bundle_column_name)) {
-            $query->condition($bundle_column_name, $bundle);
+          if ($description['type'] == 'address') {
+            // Directly query tables for Address fields.
+            $database = \Drupal\Core\Database\Database::getConnection();
+            $table = $entity . '__' . $field;
+            $query = $database->select($table);
+            // Address fields are configured by country code.
+            $query->condition($field . '_country_code', NULL, 'IS NOT NULL')
+              ->condition('bundle', $bundle);
+            $field_count = $query->countQuery()->execute()->fetchField();
           }
-          $query->exists($field)
-            ->count();
-          $field_count = $query->execute();
+          else {
+            $query = \Drupal::entityQuery($entity);
+            if (!empty($bundle_column_name)) {
+              $query->condition($bundle_column_name, $bundle);
+            }
+            $query->exists($field)
+              ->count();
+            $field_count = $query->execute();
+          }
           $this->registry->field_instance_counts[$bundle][$entity][$field] = $field_count;
         }
       }
