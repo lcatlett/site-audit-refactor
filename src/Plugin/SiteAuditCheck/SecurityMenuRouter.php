@@ -30,7 +30,7 @@ class SecurityMenuRouter extends SiteAuditCheckBase {
       if (TRUE) {
         $ret_val .= '<br/>';
         $ret_val .= '<table class="table table-condensed">';
-        $ret_val .= '<thead><tr><th>' . $thist('Path') . '</th><th>' . $this->t('Reason') . '</th></thead>';
+        $ret_val .= '<thead><tr><th>' . $this->t('Path') . '</th><th>' . $this->t('Reason') . '</th></thead>';
         $ret_val .= '<tbody>';
         foreach ($this->registry->menu_router as $path => $malicious_callbacks) {
           foreach ($malicious_callbacks as $malicious_callback) {

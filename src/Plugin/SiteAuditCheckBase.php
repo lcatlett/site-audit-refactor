@@ -95,7 +95,7 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
    */
   public function getResult() {
     if ($this->optOut) {
-      return t('Opted-out in site configuration.');
+      return $this->t('Opted-out in site configuration.');
     }
     switch ($this->score) {
       case SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS:

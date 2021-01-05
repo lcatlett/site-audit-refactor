@@ -37,8 +37,6 @@ class ExtensionsDuplicate extends SiteAuditCheckBase {
    * {@inheritdoc}.
    */
   public function getResultWarn() {
-    $ret_val = $this->t('The following duplicate extensions were found:');
-
     $paths = [];
     foreach ($this->registry->extensions_dupe as $name => $instances) {
       foreach ($instances as $instance) {

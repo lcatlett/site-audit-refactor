@@ -84,8 +84,7 @@ class ExtensionsDev extends SiteAuditCheckBase {
    */
   public function calculateScore() {
     if (!isset($this->registry->extensions) || empty($this->registry->extensions)) {
-      $moduleHandler = \Drupal::service('module_handler');
-      $this->registry->extensions = $modules = \Drupal::service('extension.list.module')->getList();
+      $this->registry->extensions = \Drupal::service('extension.list.module')->getList();
       uasort($this->registry->extensions, 'system_sort_modules_by_info_name');
     }
     $this->registry->extensions_dev = [];
@@ -169,10 +168,7 @@ class ExtensionsDev extends SiteAuditCheckBase {
       'devel_node_access' => $this->t('Development utility; degrades performance and potential security risk.'),
       'devel_themer' => $this->t('Development utility; degrades performance and potential security risk.'),
       'field_ui' => $this->t(
-      'Development user interface; allows privileged users to change site 
-structure which can lead to data inconsistencies. Best practice is to 
-store Content Types in code and deploy changes instead of allowing
-editing in live environments.'),
+      'Development user interface; allows privileged users to change site structure which can lead to data inconsistencies. Best practice is to store Content Types in code and deploy changes instead of allowing editing in live environments.'),
       'fontyourface_ui' => $this->t('Development user interface; unnecessary overhead.'),
       'form_controller' => $this->t('Development utility; unnecessary overhead.'),
       'imagecache_ui' => $this->t('Development user interface; unnecessary overhead.'),
@@ -187,10 +183,7 @@ editing in live environments.'),
       'user_display_ui' => $this->t('Development user interface; unnecessary overhead.'),
       'util' => $this->t('Development utility; unnecessary overhead, potential security risk.'),
       'views_ui' => $this->t(
-      'Development UI; allows privileged users to change site structure which
-can lead to performance problems or inconsistent behavior. Best practice 
-is to store Views in code and deploy changes instead of allowing editing 
-in live environments.'),
+      'Development UI; allows privileged users to change site structure which can lead to performance problems or inconsistent behavior. Best practice is to store Views in code and deploy changes instead of allowing editing in live environments.'),
       'views_theme_wizard' => $this->t('Development utility; unnecessary overhead, potential security risk.'),
     ];
 

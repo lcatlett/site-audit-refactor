@@ -25,8 +25,6 @@ class ContentFieldInstances extends SiteAuditCheckBase {
    * {@inheritdoc}.
    */
   public function getResultInfo() {
-    $ret_val = '';
-
     $table_rows = [];
     foreach ($this->registry->field_instance_counts as $bundle_name => $entity_types) {
       foreach ($entity_types as $entity_type => $fields) {

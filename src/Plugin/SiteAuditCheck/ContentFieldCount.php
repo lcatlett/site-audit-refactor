@@ -85,7 +85,7 @@ class ContentFieldCount extends SiteAuditCheckBase {
         'body',
         'comment_body',
       ];
-      foreach ($map as $entity => $fields) {
+      foreach ($map as $fields) {
         foreach ($fields as $field => $description) {
           if (preg_match('/^field\_/', $field) || in_array($field, $this->registry->default_fields)) {
             $this->registry->fields[$field] = $description['type'];

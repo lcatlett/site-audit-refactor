@@ -22,13 +22,13 @@ class Markdown extends Renderer {
       $ret_val .= ': ' . $percent . '%';
     }
     else {
-      $ret_val .= ': ' . t('Info');
+      $ret_val .= ': ' . $this->t('Info');
     }
     $ret_val .= str_repeat(PHP_EOL, 2);
 
     if ($percent == 100) {
-      $ret_val .= '*' . t('Well done!') . '* ';
-      $ret_val .= t('No action required.');
+      $ret_val .= '*' . $this->t('Well done!') . '* ';
+      $ret_val .= $this->t('No action required.');
       $ret_val .= PHP_EOL;
     }
 

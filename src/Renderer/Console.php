@@ -171,8 +171,6 @@ class Console extends Renderer {
     if ($detail || $this->report->getPercent() != 100) {
       foreach ($this->report->getCheckObjects() as $check) {
         $label = $this->report->getLabel() . ' - ' . $check->getLabel();
-        $checkText = '';
-        $formattedLine = '';
         $score = $check->getScore();
 
         if (($detail && $score == SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO) || ($score < SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS)) {
