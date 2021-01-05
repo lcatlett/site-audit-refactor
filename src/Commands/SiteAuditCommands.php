@@ -167,7 +167,7 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
       foreach ($reports as $report) {
         $choices[$report['id']] = $this->interpolate($report['name']);
       }
-      $choice = $this->io()->choice(dt("Choose a report to run"), $choices, 'all');
+      $choice = $this->io()->choice($this->t("Choose a report to run"), $choices, 'all');
       $input->setArgument('report', $choice);
     }
   }

@@ -131,8 +131,8 @@ class ExtensionsUnrecommended extends SiteAuditCheckBase {
     if (FALSE) {
       // Unsupported or redundant.
       $pantheon_unrecommended_modules = [
-        'memcache' => dt('Pantheon does not provide memcache; instead, redis is provided as a service to all customers; see http://helpdesk.getpantheon.com/customer/portal/articles/401317'),
-        'memcache_storage' => dt('Pantheon does not provide memcache; instead, redis is provided as a service to all customers; see http://helpdesk.getpantheon.com/customer/portal/articles/401317'),
+        'memcache' => $this->t('Pantheon does not provide memcache; instead, redis is provided as a service to all customers; see http://helpdesk.getpantheon.com/customer/portal/articles/401317'),
+        'memcache_storage' => $this->t('Pantheon does not provide memcache; instead, redis is provided as a service to all customers; see http://helpdesk.getpantheon.com/customer/portal/articles/401317'),
       ];
       $unrecommended_modules = array_merge($unrecommended_modules, $pantheon_unrecommended_modules);
     }

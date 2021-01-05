@@ -60,7 +60,7 @@ class BestPracticesMultisite extends SiteAuditCheckBase {
     }
     if ($this->score == SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN) {
       if ($this->registry->multisite_enabled) {
-        return dt('See https://www.drupal.org/node/2297419 for details on how to use multisite feature in Drupal 8.');
+        return $this->t('See https://www.drupal.org/node/2297419 for details on how to use multisite feature in Drupal 8.');
       }
       else {
         return $this->t('Inside the sites/ directory, copy example.sites.php to sites.php to create the configuration. See https://www.drupal.org/node/2297419 for details.');

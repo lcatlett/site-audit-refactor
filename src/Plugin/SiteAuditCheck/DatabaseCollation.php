@@ -41,7 +41,7 @@ class DatabaseCollation extends SiteAuditCheckBase {
       $ret_val .= '</table>';
     }
     else {
-      $ret_val = dt('Table Name: Collation') . PHP_EOL;
+      $ret_val = $this->t('Table Name: Collation') . PHP_EOL;
       if (!$this->options['json']) {
         $ret_val .= str_repeat(' ', 4);
       }
