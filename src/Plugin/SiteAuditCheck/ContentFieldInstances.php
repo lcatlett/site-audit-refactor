@@ -95,6 +95,16 @@ class ContentFieldInstances extends SiteAuditCheckBase {
               ->condition('bundle', $bundle);
             $field_count = $query->countQuery()->execute()->fetchField();
           }
+          elseif ($description['type'] == 'geolocation') {
+            // Directly query tables for Geolocation fields.
+            $database = \Drupal\Core\Database\Database::getConnection();
+            $table = $entity . '__' . $field;
+            $query = $database->select($table);
+            // Geolocation fields are configured by latitude value.
+            $query->condition($field . '_lat', NULL, 'IS NOT NULL')
+              ->condition('bundle', $bundle);
+            $field_count = $query->countQuery()->execute()->fetchField();
+          }
           else {
             $query = \Drupal::entityQuery($entity);
             if (!empty($bundle_column_name)) {
