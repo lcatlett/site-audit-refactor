@@ -105,6 +105,14 @@ class ContentFieldInstances extends SiteAuditCheckBase {
               ->condition('bundle', $bundle);
             $field_count = $query->countQuery()->execute()->fetchField();
           }
+          elseif ($description['type'] == 'name') {
+            // Directly query tables for Name fields.
+            $database = \Drupal\Core\Database\Database::getConnection();
+            $table = $entity . '__' . $field;
+            $query = $database->select($table);
+            $query->condition('bundle', $bundle);
+            $field_count = $query->countQuery()->execute()->fetchField();
+          }
           else {
             $query = \Drupal::entityQuery($entity);
             if (!empty($bundle_column_name)) {
