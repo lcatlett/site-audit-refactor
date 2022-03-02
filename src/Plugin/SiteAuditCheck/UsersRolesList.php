@@ -26,8 +26,10 @@ class UsersRolesList extends SiteAuditCheckBase {
    */
   public function getResultInfo() {
     $counts = [];
-    foreach ($this->registry->roles as $name => $count_users) {
-      $counts[] = "$name: $count_users";
+    if (isset($this->registry->roles)) {
+      foreach ($this->registry->roles as $name => $count_users) {
+        $counts[] = "$name: $count_users";
+      }
     }
     return implode('<br/>', $counts);
   }
