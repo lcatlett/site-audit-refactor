@@ -85,42 +85,33 @@ class ContentFieldInstances extends SiteAuditCheckBase {
           continue;
         }
         foreach ($description['bundles'] as $bundle) {
-          if ($description['type'] == 'address') {
-            // Directly query tables for Address fields.
-            $database = \Drupal\Core\Database\Database::getConnection();
-            $table = $entity . '__' . $field;
-            $query = $database->select($table);
-            // Address fields are configured by country code.
-            $query->condition($field . '_country_code', NULL, 'IS NOT NULL')
-              ->condition('bundle', $bundle);
-            $field_count = $query->countQuery()->execute()->fetchField();
-          }
-          elseif ($description['type'] == 'geolocation') {
-            // Directly query tables for Geolocation fields.
-            $database = \Drupal\Core\Database\Database::getConnection();
-            $table = $entity . '__' . $field;
-            $query = $database->select($table);
-            // Geolocation fields are configured by latitude value.
-            $query->condition($field . '_lat', NULL, 'IS NOT NULL')
-              ->condition('bundle', $bundle);
-            $field_count = $query->countQuery()->execute()->fetchField();
-          }
-          elseif ($description['type'] == 'name') {
-            // Directly query tables for Name fields.
-            $database = \Drupal\Core\Database\Database::getConnection();
-            $table = $entity . '__' . $field;
-            $query = $database->select($table);
-            $query->condition('bundle', $bundle);
-            $field_count = $query->countQuery()->execute()->fetchField();
-          }
-          else {
-            $query = \Drupal::entityQuery($entity);
-            if (!empty($bundle_column_name)) {
-              $query->condition($bundle_column_name, $bundle);
-            }
-            $query->exists($field)
-              ->count();
-            $field_count = $query->execute();
+          switch ($description['type']) {
+            case 'address':
+              // Directly query tables for Address fields.
+              $database = \Drupal\Core\Database\Database::getConnection();
+              $table = $entity . '__' . $field;
+              $query = $database->select($table);
+              // Address fields are configured by country code.
+              $query->condition($field . '_country_code', NULL, 'IS NOT NULL')
+                ->condition('bundle', $bundle);
+              $field_count = $query->countQuery()->execute()->fetchField();
+              break;
+            case 'office_hours':
+              $table = $entity . '__' . $field;
+              $field_count = $this->custom_field_count($bundle, $table, $field . '_starthours');
+              break;
+            case 'name':
+              $table = $entity . '__' . $field;
+              $field_count = $this->custom_field_count($bundle, $table, $field . '_given');
+              break;
+            default:
+              $query = \Drupal::entityQuery($entity);
+              if (!empty($bundle_column_name)) {
+                $query->condition($bundle_column_name, $bundle);
+              }
+              $query->exists($field)
+                ->count();
+              $field_count = $query->execute();
           }
           $this->registry->field_instance_counts[$bundle][$entity][$field] = $field_count;
         }
@@ -129,4 +120,22 @@ class ContentFieldInstances extends SiteAuditCheckBase {
     return SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO;
   }
 
+  /**
+   * use a custom field to get the field count instead of the basic _value
+   * column that doesn't always exist
+   *
+   * @param $bundle
+   * @param $table
+   * @param $field
+   *
+   * @return mixed
+   */
+  function custom_field_count($bundle, $table, $field) {
+    $database = \Drupal\Core\Database\Database::getConnection();
+    $query = $database->select($table);
+    $query->condition($field, NULL, 'IS NOT NULL')
+      ->condition('bundle', $bundle);
+    $field_count = $query->countQuery()->execute()->fetchField();
+    return $field_count;
+  }
 }
