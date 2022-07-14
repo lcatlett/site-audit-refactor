@@ -85,33 +85,37 @@ class ContentFieldInstances extends SiteAuditCheckBase {
           continue;
         }
         foreach ($description['bundles'] as $bundle) {
-          switch ($description['type']) {
-            case 'address':
-              // Directly query tables for Address fields.
-              $database = \Drupal\Core\Database\Database::getConnection();
-              $table = $entity . '__' . $field;
-              $query = $database->select($table);
-              // Address fields are configured by country code.
-              $query->condition($field . '_country_code', NULL, 'IS NOT NULL')
-                ->condition('bundle', $bundle);
-              $field_count = $query->countQuery()->execute()->fetchField();
-              break;
-            case 'office_hours':
-              $table = $entity . '__' . $field;
-              $field_count = $this->custom_field_count($bundle, $table, $field . '_starthours');
-              break;
-            case 'name':
-              $table = $entity . '__' . $field;
-              $field_count = $this->custom_field_count($bundle, $table, $field . '_given');
-              break;
-            default:
-              $query = \Drupal::entityQuery($entity);
-              if (!empty($bundle_column_name)) {
-                $query->condition($bundle_column_name, $bundle);
-              }
-              $query->exists($field)
-                ->count();
-              $field_count = $query->execute();
+          try {
+            switch ($description['type']) {
+              case 'address':
+                // Directly query tables for Address fields.
+                $table = $entity . '__' . $field;
+                $query = $this->db->select($table);
+                // Address fields are configured by country code.
+                $query->condition($field . '_country_code', NULL, 'IS NOT NULL')
+                  ->condition('bundle', $bundle);
+                $field_count = $query->countQuery()->execute()->fetchField();
+                break;
+              case 'office_hours':
+                $table = $entity . '__' . $field;
+                $field_count = $this->custom_field_count($bundle, $table, $field . '_starthours');
+                break;
+              case 'name':
+                $table = $entity . '__' . $field;
+                $field_count = $this->custom_field_count($bundle, $table, $field . '_given');
+                break;
+              default:
+                $query = \Drupal::entityQuery($entity);
+                if (!empty($bundle_column_name)) {
+                  $query->condition($bundle_column_name, $bundle);
+                }
+                $query->exists($field)
+                  ->count();
+                $field_count = $query->execute();
+            }
+          }
+          catch (\Drupal\Core\Entity\Query\QueryException $e) {
+            $field_count = get_class($e) . ': ' . $e->getMessage();
           }
           $this->registry->field_instance_counts[$bundle][$entity][$field] = $field_count;
         }
@@ -131,8 +135,7 @@ class ContentFieldInstances extends SiteAuditCheckBase {
    * @return mixed
    */
   function custom_field_count($bundle, $table, $field) {
-    $database = \Drupal\Core\Database\Database::getConnection();
-    $query = $database->select($table);
+    $query = $this->db->select($table);
     $query->condition($field, NULL, 'IS NOT NULL')
       ->condition('bundle', $bundle);
     $field_count = $query->countQuery()->execute()->fetchField();

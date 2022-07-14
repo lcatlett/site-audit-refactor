@@ -3,12 +3,15 @@
 namespace Drupal\site_audit\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
 /**
  * Base class for Site Audit Check plugins.
  */
-abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckInterface {
+abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckInterface, ContainerFactoryPluginInterface {
 
   use StringTranslationTrait;
 
@@ -67,14 +70,19 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
   protected $options = [];
 
   /**
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $db;
+
+  /**
    * Constructor.
    *
-   * @param array $registry
-   *   Aggregates data from each individual check.
-   * @param bool $opt_out
-   *   If set, will not perform checks.
+   * @param $configuration
+   * @param $plugin_id
+   * @param $plugin_definition
+   * @param ConnectionAlias $database
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $database) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     if (isset($configuration['options'])) {
       $this->options = $configuration['options'];
@@ -85,6 +93,24 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
       $this->score = SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO;
     }
     $static = FALSE;
+    $this->db = $database;
+  }
+
+  /**
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   *
+   * @return static
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('database')
+    );
   }
 
   /**
