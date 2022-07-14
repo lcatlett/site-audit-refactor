@@ -63,13 +63,13 @@ drush audit users --format=html > ~Desktop/report.html
 #### Continue writing to a file
 
 ```bash
-drush audit security --html --detail >> ~/Desktop/report.html
+drush audit security --format=html --detail >> ~/Desktop/report.html
 ```
 
 ### Run every report with maximum detail, skipping Google insights and adding Twitter Bootstrap for styling
 
 ```bash
-drush audit --html --bootstrap --detail --skip=insights > ~/Desktop/report.html
+drush audit --format=html --bootstrap --detail --skip=insights > ~/Desktop/report.html
 ```
 
 ### Skipping reports or checks
@@ -89,22 +89,10 @@ Multiple skip values can be used, comma separated.
 
 If you want to permanently opt-out of a check, use the $conf array in
 settings.php with the individual check names in the same format as the skip
-option. For example, to permanently opt-out of the PageCompression check in the
-Cache report:
+option. For example, to permanently opt-out of the Cache report:
 
 ```bash
-$conf['site_audit']['opt_out']['CachePageCompression'] = TRUE;
-```
-
-## Vendor specific options
-
-Some commands such as the cache audit (ac) have the ability to optionally
-produce results that are specific to a particular platform. Currently only
-supports Pantheon, but submit a patch if you have another platform that should
-have explicit support that will be helpful to other developers.
-
-```bash
-drush @pantheon.SITENAME.ENV --vendor=pantheon --detail audit
+$config['site_audit.settings']['reports']['cache'] = TRUE;
 ```
 
 ## Adding Reports and Checks
