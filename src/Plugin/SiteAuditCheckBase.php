@@ -75,14 +75,20 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
   protected $db;
 
   /**
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * Constructor.
    *
    * @param $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @param ConnectionAlias $database
+   * @param \Drupal\Core\Database\Connection $database
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $database) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $database, \Drupal\Core\Logger\LoggerChannelFactory $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     if (isset($configuration['options'])) {
       $this->options = $configuration['options'];
@@ -94,6 +100,7 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
     }
     $static = FALSE;
     $this->db = $database;
+    $this->logger = $logger_factory->get('site_audit');
   }
 
   /**
@@ -109,7 +116,8 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('database')
+      $container->get('database'),
+      $container->get('logger.factory')
     );
   }
 

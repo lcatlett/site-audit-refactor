@@ -114,8 +114,9 @@ class ContentFieldInstances extends SiteAuditCheckBase {
                 $field_count = $query->execute();
             }
           }
-          catch (\Drupal\Core\Entity\Query\QueryException $e) {
+          catch (\Exception $e) {
             $field_count = get_class($e) . ': ' . $e->getMessage();
+            watchdog_exception('site_audit', $e);
           }
           $this->registry->field_instance_counts[$bundle][$entity][$field] = $field_count;
         }
