@@ -86,9 +86,9 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
    * @param $plugin_id
    * @param $plugin_definition
    * @param \Drupal\Core\Database\Connection $database
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $database, \Drupal\Core\Logger\LoggerChannelFactory $logger_factory) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $database, \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     if (isset($configuration['options'])) {
       $this->options = $configuration['options'];
