@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "cache_default_bins",
  *  name = @Translation("Default Cache Bins"),
  *  description = @Translation("All default cache bins."),
- *  report = "cache"
+ *  checklist = "cache"
  * )
  */
 class CacheBinsDefault extends SiteAuditCheckBase {

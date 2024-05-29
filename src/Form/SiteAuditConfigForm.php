@@ -7,7 +7,7 @@ namespace Drupal\site_audit\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\site_audit\Plugin\SiteAuditReportManager;
+use Drupal\site_audit\Plugin\SiteAuditChecklistManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,19 +17,19 @@ class SiteAuditConfigForm extends ConfigFormBase {
 
 
   /**
-   * @var \Drupal\site_audit\Plugin\SiteAuditReportManager
+   * @var \Drupal\site_audit\Plugin\SiteAuditChecklistManager
    */
-  protected $report_plugin_manager;
+  protected $checklist_plugin_manager;
 
   /**
    * SiteAuditConfigForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   * @param \Drupal\site_audit\Plugin\SiteAuditReportManager $site_audit_report_manager
+   * @param \Drupal\site_audit\Plugin\SiteAuditChecklistManager $site_audit_checklist_manager
    */
-  public function __construct(ConfigFactoryInterface $config_factory, SiteAuditReportManager $site_audit_report_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, SiteAuditChecklistManager $site_audit_checklist_manager) {
     parent::__construct($config_factory);
-    $this->report_plugin_manager = $site_audit_report_manager;
+    $this->checklist_plugin_manager = $site_audit_checklist_manager;
   }
 
   /**
@@ -38,7 +38,7 @@ class SiteAuditConfigForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('plugin.manager.site_audit_report')
+      $container->get('plugin.manager.site_audit_checklist')
     );
   }
 
@@ -62,9 +62,9 @@ class SiteAuditConfigForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $options = [];
     $saved_options = $this->config('site_audit.settings')->get('reports');
-    $reports = $this->report_plugin_manager->getDefinitions();
-    foreach ($reports as $report) {
-      $options[$report['id']] = $report['name'];
+    $checklists = $this->checklist_plugin_manager->getDefinitions();
+    foreach ($checklists as $checklist) {
+      $options[$checklist['id']] = $checklist['name'];
     }
     if (empty($saved_options)) {
       $saved_options = [];
@@ -84,8 +84,7 @@ class SiteAuditConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $selected_options = $form_state->getValue('reports');
-    $this->config('site_audit.settings')->set('reports', $selected_options)->save();
+    $this->config('site_audit.settings')->set('reports', $form_state->getValue('reports'))->save();
     parent::submitForm($form, $form_state);
   }
 

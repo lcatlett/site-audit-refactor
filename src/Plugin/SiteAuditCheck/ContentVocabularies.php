@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "content_vocabularies",
  *  name = @Translation("Taxonomy vocabularies"),
  *  description = @Translation("Available vocabularies and term counts"),
- *  report = "content",
+ *  checklist = "content",
  *  weight = 6,
  * )
  */

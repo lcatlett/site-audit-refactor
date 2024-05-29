@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "content_vocabularies_unused",
  *  name = @Translation("Unused vocabularies"),
  *  description = @Translation("Check for unused vocabularies"),
- *  report = "content",
+ *  checklist = "content",
  *  weight = 7,
  * )
  */

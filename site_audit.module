@@ -5,6 +5,7 @@
  * Contains hooks and functions for the site_audit.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -62,3 +63,51 @@ if (!function_exists('human_filesize')) {
     return round($size, $precision) . ' ' . $units[$i];
   }
 }
+
+/**
+ * Form alter hook for site.module's settings page.
+ *
+ * Tells site.module to use Site Audit reports for Site State.
+ *
+ * @param $form
+ * @return void
+ */
+function site_audit_form_site_entity_settings_alter(&$form, FormStateInterface $form_state)
+{
+  $form['state']['state_factors']['#options']['site_audit'] = t('Site Audit Reports <a href=":url">view</a>', [
+      ':url' => '/admin/reports/site-audit',
+  ]);
+  $audit_manager = \Drupal::service('plugin.manager.site_audit_checklist');
+
+  $site_settings = \Drupal::config('site.settings');
+  $checklists = $audit_manager->getDefinitions();
+  foreach ($checklists as $checklist) {
+    $options[$checklist['id']] = $checklist['name'];
+  }
+  $form['state']['site_audit_required'] = [
+      '#type' => 'checkboxes',
+      '#title' => t('Required Site Audit Checklists'),
+      '#description' => t('Choose the Reports that must pass 100% to to put the site in OK state.'),
+      '#options' => $options,
+      '#default_value' => $site_settings->get('site_audit_required') ?? [],
+      '#states' => [
+          'visible' => [
+              ':input[name="state_factors[site_audit]"]' => ['checked' => true]
+          ]
+      ],
+  ];
+  $form['#submit'][] = 'site_audit_site_entity_settings_save';
+
+
+}
+
+/**
+ * Entity builder for the commerce_product_attribute config entity.
+ */
+function site_audit_site_entity_settings_save(array &$form, FormStateInterface $form_state) {
+  \Drupal::configFactory()->getEditable('site.settings')
+    ->set('site_audit_required', $form_state->getValue('site_audit_required'))
+    ->save()
+  ;
+}
+

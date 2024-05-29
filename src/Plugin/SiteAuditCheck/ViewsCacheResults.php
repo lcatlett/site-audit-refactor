@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "views_cache_results",
  *  name = @Translation("Query results caching"),
  *  description = @Translation("Check to see if raw query results are being cached."),
- *  report = "views"
+ *  checklist = "views"
  * )
  */
 class ViewsCacheResults extends SiteAuditCheckBase {

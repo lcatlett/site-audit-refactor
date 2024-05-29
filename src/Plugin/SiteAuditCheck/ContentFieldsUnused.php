@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "content_field_unused",
  *  name = @Translation("Unused fields"),
  *  description = @Translation("Determine which fields are unused in each bundle."),
- *  report = "content"
+ *  checklist = "content"
  * )
  */
 class ContentFieldsUnused extends SiteAuditCheckBase {

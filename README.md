@@ -99,7 +99,7 @@ $config['site_audit.settings']['reports']['cache'] = TRUE;
 
 There are two classes that you should be aware of:
 
-* SiteAuditReport - a collection of Checks, run in sequential order. If a check
+* SiteAuditChecklist - a collection of Checks, run in sequential order. If a check
   sets the abort property to TRUE, no further Checks in the report will be
   executed. The Check names are defined in hook_drush_command with the key name
   "checks". Check names must match the file name of the actual Check, including
@@ -133,17 +133,17 @@ include all the overhead of loading custom code.
 
 ### Custom Reports
 
-Custom Reports should extend `SiteAuditReportBase` and should live in the
-`YOURMODULE/src/Plugin/SiteAuditReport/` directory.
+Custom Reports should extend `SiteAuditChecklistBase` and should live in the
+`YOURMODULE/src/Plugin/SiteAuditChecklist/` directory.
 
-The comment for the SiteAuditReportBase class must include the
-`@SiteAuditReport` annotation, including _id_, _name_, and _description_.
+The comment for the SiteAuditChecklistBase class must include the
+`@SiteAuditChecklist` annotation, including _id_, _name_, and _description_.
 
 ```php
 /**
  * A brief description of your Report.
  *
- * @SiteAuditReport(
+ * @SiteAuditChecklist(
  *  id = "new_report",
  *  name = @Translation("A New Report"),
  *  description = @Translation("Reports something")

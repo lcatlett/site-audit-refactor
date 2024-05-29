@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "watchdog_age",
  *  name = @Translation("Date range of log entries"),
  *  description = @Translation("Oldest and newest."),
- *  report = "watchdog"
+ *  checklist = "watchdog"
  * )
  */
 class WatchdogAge extends SiteAuditCheckBase {

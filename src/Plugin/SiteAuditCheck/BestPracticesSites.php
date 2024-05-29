@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "best_practices_sites",
  *  name = @Translation("sites/sites.php"),
  *  description = @Translation("Check if multisite configuration file is a symbolic link."),
- *  report = "best_practices"
+ *  checklist = "best_practices"
  * )
  */
 class BestPracticesSites extends SiteAuditCheckBase {

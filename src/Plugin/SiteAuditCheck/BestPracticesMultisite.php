@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "best_practices_multisite",
  *  name = @Translation("Multi-site"),
  *  description = @Translation("Detect multi-site configurations."),
- *  report = "best_practices"
+ *  checklist = "best_practices"
  * )
  */
 class BestPracticesMultisite extends SiteAuditCheckBase {

@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "cache_preprocess_css",
  *  name = @Translation("Aggregate and compress CSS files in Drupal."),
  *  description = @Translation("Verify that Drupal is aggregating and compressing CSS."),
- *  report = "cache"
+ *  checklist = "cache"
  * )
  */
 class CachePreprocessCSS extends SiteAuditCheckBase {

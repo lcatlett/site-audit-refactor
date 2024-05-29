@@ -2,8 +2,10 @@
 
 namespace Drupal\site_audit\Plugin;
 
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -88,7 +90,7 @@ abstract class SiteAuditCheckBase extends PluginBase implements SiteAuditCheckIn
    * @param \Drupal\Core\Database\Connection $database
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $database, \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, Connection $database, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     if (isset($configuration['options'])) {
       $this->options = $configuration['options'];

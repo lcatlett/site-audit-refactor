@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "watchdog_404",
  *  name = @Translation("Number of 404 entries"),
  *  description = @Translation("Count the number of page not found entries."),
- *  report = "watchdog"
+ *  checklist = "watchdog"
  * )
  */
 class Watchdog404 extends SiteAuditCheckBase {

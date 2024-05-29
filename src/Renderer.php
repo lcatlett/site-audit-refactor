@@ -16,7 +16,7 @@ abstract class Renderer {
    *
    * @var \Drupal\site_audit\Report
    */
-  public $report;
+  public $checklist;
 
   /**
    * The logger we are using for output.
@@ -36,8 +36,8 @@ abstract class Renderer {
   /**
    *
    */
-  public function __construct($report, $logger, $options, $output) {
-    $this->report = $report;
+  public function __construct($checklist, $logger, $options, $output) {
+    $this->checklist = $checklist;
     $this->logger = $logger;
     $this->options = $options;
     $this->output = $output;

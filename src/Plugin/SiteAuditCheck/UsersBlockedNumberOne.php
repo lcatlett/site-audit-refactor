@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "users_blocked_number_one",
  *  name = @Translation("UID #1 access"),
  *  description = @Translation("Determine if UID #1 is blocked."),
- *  report = "users"
+ *  checklist = "users"
  * )
  */
 class UsersBlockedNumberOne extends SiteAuditCheckBase {

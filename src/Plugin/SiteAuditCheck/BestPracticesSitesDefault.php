@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "best_practices_sites_default",
  *  name = @Translation("sites/default"),
  *  description = @Translation("Check if it exists and isn\'t symbolic"),
- *  report = "best_practices"
+ *  checklist = "best_practices"
  * )
  */
 class BestPracticesSitesDefault extends SiteAuditCheckBase {

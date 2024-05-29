@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "users_roles_list",
  *  name = @Translation("List Roles"),
  *  description = @Translation("Show all available roles and user counts."),
- *  report = "users"
+ *  checklist = "users"
  * )
  */
 class UsersRolesList extends SiteAuditCheckBase {

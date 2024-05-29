@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "cache_preprocess_js",
  *  name = @Translation("Aggregate and compress JavaScript files in Drupal"),
  *  description = @Translation("Verify that Drupal is aggregating JavaScript."),
- *  report = "cache"
+ *  checklist = "cache"
  * )
  */
 class CachePreprocessJS extends SiteAuditCheckBase {

@@ -12,7 +12,7 @@ use Drupal\site_audit\Renderer\Html;
  *  id = "content_duplicate_titles",
  *  name = @Translation("Duplicate titles"),
  *  description = @Translation("Scan nodes for duplicate titles within a particular content type"),
- *  report = "content"
+ *  checklist = "content"
  * )
  */
 class ContentDuplicateTitles extends SiteAuditCheckBase {

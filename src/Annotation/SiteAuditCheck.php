@@ -48,12 +48,12 @@ class SiteAuditCheck extends Plugin {
   public $weight = 0;
 
   /**
-   * The report for the check.
+   * The checklist this check is on.
    *
    * @var \Drupal\Core\Annotation\Translation
    *
    * @ingroup plugin_translatable
    */
-  public $report;
+  public $checklist;
 
 }

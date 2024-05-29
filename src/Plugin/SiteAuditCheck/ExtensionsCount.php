@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "extensions_count",
  *  name = @Translation("Count"),
  *  description = @Translation("Count the number of enabled extensions (modules and themes) in a site."),
- *  report = "extensions"
+ *  checklist = "extensions"
  * )
  */
 class ExtensionsCount extends SiteAuditCheckBase {

@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "best_practices_folder_structure",
  *  name = @Translation("Folder Structure"),
  *  description = @Translation("Checks if modules/contrib and modules/custom directory is present"),
- *  report = "best_practices"
+ *  checklist = "best_practices"
  * )
  */
 class BestPracticesFolderStructure extends SiteAuditCheckBase {

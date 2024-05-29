@@ -12,7 +12,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "database_row_count",
  *  name = @Translation("Tables with at least 1000 rows"),
  *  description = @Translation("Return list of all tables with at least 1000 rows in the database."),
- *  report = "database"
+ *  checklist = "database"
  * )
  */
 class DatabaseRowCount extends SiteAuditCheckBase {
@@ -69,26 +69,31 @@ class DatabaseRowCount extends SiteAuditCheckBase {
   /**
    * {@inheritdoc}.
    */
-  public function calculateScore() {
-    $connection = Database::getConnection();
-    $this->registry->rows_by_table = [];
-    $warning = FALSE;
-    $query = \Drupal::database()->select('information_schema.TABLES', 'ist');
-    $query->fields('ist', ['TABLE_NAME', 'TABLE_ROWS']);
-    $query->condition('ist.TABLE_ROWS', 1000, '>');
-    $query->condition('ist.table_schema', $connection->getConnectionOptions()['database']);
-    $query->orderBy('TABLE_ROWS', 'DESC');
-    $result = $query->execute()->fetchAllKeyed();
-    foreach ($result as $table => $rows) {
-      if ($rows > 1000) {
-        $warning = TRUE;
+  public function calculateScore()
+  {
+    try {
+      $connection = Database::getConnection();
+      $this->registry->rows_by_table = [];
+      $warning = FALSE;
+      $query = \Drupal::database()->select('information_schema.TABLES', 'ist');
+      $query->fields('ist', ['TABLE_NAME', 'TABLE_ROWS']);
+      $query->condition('ist.TABLE_ROWS', 1000, '>');
+      $query->condition('ist.table_schema', $connection->getConnectionOptions()['database']);
+      $query->orderBy('TABLE_ROWS', 'DESC');
+      $result = $query->execute()->fetchAllKeyed();
+      foreach ($result as $table => $rows) {
+        if ($rows > 1000) {
+          $warning = TRUE;
+        }
+        $this->registry->rows_by_table[$table] = $rows;
       }
-      $this->registry->rows_by_table[$table] = $rows;
-    }
-    if ($warning) {
-      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN;
-    }
-    return SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO;
-  }
+      if ($warning) {
+        return SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN;
+      }
+      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO;
 
+    } catch (\Exception $e) {
+      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
+    }
+  }
 }

@@ -12,7 +12,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "database_collation",
  *  name = @Translation("Collations"),
  *  description = @Translation("Check to see if there are any tables that aren't using UTF-8."),
- *  report = "database"
+ *  checklist = "database"
  * )
  */
 class DatabaseCollation extends SiteAuditCheckBase {
@@ -85,32 +85,36 @@ class DatabaseCollation extends SiteAuditCheckBase {
   /**
    * {@inheritdoc}.
    */
-  public function calculateScore() {
-    $connection = Database::getConnection();
-    $query = \Drupal::database()->select('information_schema.TABLES', 'ist');
-    $query->addField('ist', 'TABLE_NAME', 'name');
-    $query->addField('ist', 'TABLE_COLLATION', 'collation');
-    $query->condition('ist.TABLE_COLLATION', ['utf8_general_ci', 'utf8_unicode_ci', 'utf8_bin', 'utf8mb4_general_ci'], 'NOT IN');
-    $query->condition('ist.table_schema', $connection->getConnectionOptions()['database']);
-    $result = $query->execute();
-    $count = 0;
-    $warn = FALSE;
-    while ($row = $result->fetchAssoc()) {
-      $count++;
-      $this->registry->collation_tables[$row['name']] = $row['collation'];
-      // Special case for old imports.
-      if ($row['collation'] == 'latin1_swedish_ci') {
-        $warn = TRUE;
+  public function calculateScore()
+  {
+    try {
+      $connection = Database::getConnection();
+      $query = \Drupal::database()->select('information_schema.TABLES', 'ist');
+      $query->addField('ist', 'TABLE_NAME', 'name');
+      $query->addField('ist', 'TABLE_COLLATION', 'collation');
+      $query->condition('ist.TABLE_COLLATION', ['utf8_general_ci', 'utf8_unicode_ci', 'utf8_bin', 'utf8mb4_general_ci'], 'NOT IN');
+      $query->condition('ist.table_schema', $connection->getConnectionOptions()['database']);
+      $result = $query->execute();
+      $count = 0;
+      $warn = FALSE;
+      while ($row = $result->fetchAssoc()) {
+        $count++;
+        $this->registry->collation_tables[$row['name']] = $row['collation'];
+        // Special case for old imports.
+        if ($row['collation'] == 'latin1_swedish_ci') {
+          $warn = TRUE;
+        }
       }
-    }
 
-    if ($count === 0) {
-      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS;
+      if ($count === 0) {
+        return SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS;
+      }
+      if ($warn) {
+        return SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN;
+      }
+      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO;
+    } catch (\Exception $e) {
+      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
     }
-    if ($warn) {
-      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_WARN;
-    }
-    return SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO;
   }
-
 }

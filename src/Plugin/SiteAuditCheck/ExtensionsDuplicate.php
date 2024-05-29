@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "extensions_duplicate",
  *  name = @Translation("Duplicates"),
  *  description = @Translation("Check for duplicate extensions in the site codebase."),
- *  report = "extensions"
+ *  checklist = "extensions"
  * )
  */
 class ExtensionsDuplicate extends SiteAuditCheckBase {

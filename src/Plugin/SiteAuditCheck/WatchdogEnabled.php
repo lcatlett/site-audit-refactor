@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "watchdog_enabled",
  *  name = @Translation("dblog status"),
  *  description = @Translation("Check to see if database logging is enabled."),
- *  report = "watchdog",
+ *  checklist = "watchdog",
  *  weight = -5,
  * )
  */

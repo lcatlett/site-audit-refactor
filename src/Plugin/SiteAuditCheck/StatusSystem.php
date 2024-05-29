@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "status_system",
  *  name = @Translation("System Status"),
  *  description = @Translation("Drupal's status report."),
- *  report = "status"
+ *  checklist = "status"
  * )
  */
 class StatusSystem extends SiteAuditCheckBase {

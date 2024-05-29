@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "cache_bins_used",
  *  name = @Translation("Used Bins"),
  *  description = @Translation("Cache bins used by each service."),
- *  report = "cache"
+ *  checklist = "cache"
  * )
  */
 class CacheBinsUsed extends SiteAuditCheckBase {

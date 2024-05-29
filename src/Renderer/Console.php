@@ -24,8 +24,8 @@ class Console extends Renderer {
   /**
    *
    */
-  public function __construct($report, $logger, $options, $output) {
-    parent::__construct($report, $logger, $options, $output);
+  public function __construct($checklist, $logger, $options, $output) {
+    parent::__construct($checklist, $logger, $options, $output);
     $this->output = $output;
     $this->formatter = new FormatterHelper();
   }
@@ -152,14 +152,14 @@ class Console extends Renderer {
     $outputStyle = new OutputFormatterStyle('yellow', 'black');
     $this->output->getFormatter()->setStyle('score-info', $outputStyle);
 
-    $reportText = '';
+    $checklistText = '';
 
-    $percent = $this->report->getPercent();
+    $percent = $this->checklist->getPercent();
     $style = $this->getSymphonyStyle($percent);
 
     // Add the report header.
     $this->horizontalRule();
-    $this->centerText('<info>' . $this->interpolate($this->t('Report: ')) . $this->interpolate($this->report->getLabel()) . '</> - <' . $style . '>' . $percent . '%</>');
+    $this->centerText('<info>' . $this->interpolate($this->t('Report: ')) . $this->interpolate($this->checklist->getLabel()) . '</> - <' . $style . '>' . $percent . '%</>');
     $this->horizontalRule();
 
     // No action required.
@@ -168,9 +168,9 @@ class Console extends Renderer {
     }
 
     // Information or a problem.
-    if ($detail || $this->report->getPercent() != 100) {
-      foreach ($this->report->getCheckObjects() as $check) {
-        $label = $this->report->getLabel() . ' - ' . $check->getLabel();
+    if ($detail || $this->checklist->getPercent() != 100) {
+      foreach ($this->checklist->getCheckObjects() as $check) {
+        $label = $this->checklist->getLabel() . ' - ' . $check->getLabel();
         $score = $check->getScore();
 
         if (($detail && $score == SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO) || ($score < SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS)) {
@@ -214,7 +214,7 @@ class Console extends Renderer {
         $this->output->writeln('');
       }
     }
-    $this->output->writeln('<report>' . $reportText . '</>');
+    $this->output->writeln('<report>' . $checklistText . '</>');
   }
 
   /**

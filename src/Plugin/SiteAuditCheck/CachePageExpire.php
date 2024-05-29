@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "cache_page_expire",
  *  name = @Translation("Expiration of cached pages"),
  *  description = @Translation("Verify that Drupal\'s cached pages last for at least 15 minutes."),
- *  report = "cache"
+ *  checklist = "cache"
  * )
  */
 class CachePageExpire extends SiteAuditCheckBase {

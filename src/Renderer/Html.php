@@ -3,6 +3,7 @@
 namespace Drupal\site_audit\Renderer;
 
 use Drupal\site_audit\Plugin\SiteAuditCheckBase;
+use Drupal\site_audit\Plugin\SiteAuditChecklistBase;
 use Drupal\site_audit\Renderer;
 
 /**
@@ -18,8 +19,8 @@ class Html extends Renderer {
   /**
    * @inherit
    */
-  public function __construct($report, $logger = NULL, $options = NULL, $output = NULL) {
-    parent::__construct($report, $logger, $options, $output);
+  public function __construct($checklist, $logger = NULL, $options = NULL, $output = NULL) {
+    parent::__construct($checklist, $logger, $options, $output);
     $this->buildHeader();
   }
 
@@ -99,7 +100,7 @@ class Html extends Renderer {
         ],
       ],
     ];
-    if (is_array($this->report)) {
+    if (is_array($this->checklist)) {
       // There are multiple reports.
       $this->build['container']['summary'] = [
         '#type' => 'html_tag',
@@ -117,14 +118,14 @@ class Html extends Renderer {
         '#type' => 'html_tag',
         '#tag' => 'p',
       ];
-      foreach ($this->report as $report) {
-        $this->build['container']['summary']['links'][$report->getPluginId()] = [
+      foreach ($this->checklist as $checklist) {
+        $this->build['container']['summary']['links'][$checklist->getPluginId()] = [
           '#type' => 'html_tag',
           '#tag' => 'a',
-          '#value' => $report->getLabel() . ' (' . $report->getPercent() . '%)',
+          '#value' => $checklist->getLabel() . ' (' . $checklist->getPercent() . '%)',
           '#attributes' => [
-            'href' => '#' . $report->getPluginId(),
-            'class' => $this->getPercentCssClass($report->getPercent()),
+            'href' => '#' . $checklist->getPluginId(),
+            'class' => $this->getPercentCssClass($checklist->getPercent()),
           ],
         ];
       }
@@ -184,11 +185,11 @@ class Html extends Renderer {
    * Render either one report, or multiple.
    */
   public function render($detail = FALSE) {
-    if (is_array($this->report)) {
+    if (is_array($this->checklist)) {
       // There are multiple reports.
-      foreach ($this->report as $report) {
-        $this->build['container'][$report->getPluginId()] = $this->renderReport($report);
-        $this->build['container'][$report->getPluginId()]['top_link'] = [
+      foreach ($this->checklist as $checklist) {
+        $this->build['container'][$checklist->getPluginId()] = $this->renderReport($checklist);
+        $this->build['container'][$checklist->getPluginId()]['top_link'] = [
           '#type' => 'html_tag',
           '#tag' => 'a',
           '#value' => $this->t('Back to top'),
@@ -199,7 +200,7 @@ class Html extends Renderer {
       }
     }
     else {
-      $this->build['container'][$this->report->getPluginId()] = $this->renderReport($this->report);
+      $this->build['container'][$this->checklist->getPluginId()] = $this->renderReport($this->checklist);
     }
 
     $this->checkBootstrap();
@@ -213,28 +214,30 @@ class Html extends Renderer {
 
   /**
    * Render a single report.
+   * @param $checklist
+   * @return array
    */
-  public function renderReport($report) {
+  public function renderReport(SiteAuditChecklistBase $checklist) {
     $build = [];
     // The report header.
     $build['report_label'] = [
       '#type' => 'html_tag',
       '#tag' => 'h2',
-      '#value' => $report->getLabel() . ' ',
+      '#value' => $checklist->getLabel() . ' ',
       '#attributes' => [
-        'id' => $report->getPluginId(),
+        'id' => $checklist->getPluginId(),
       ],
       'percent' => [
         '#type' => 'html_tag',
         '#tag' => 'span',
-        '#value' => $report->getPercent() . '%',
+        '#value' => $checklist->getPercent() . '%',
         '#attributes' => [
-          'class' => 'label label-' . $this->getPercentCssClass($report->getPercent()),
+          'class' => 'label label-' . $this->getPercentCssClass($checklist->getPercent()),
         ],
       ],
     ];
 
-    $percent = $report->getPercent();
+    $percent = $checklist->getPercent();
 
     if ($percent != SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO) {
       // Show percent.
@@ -271,7 +274,7 @@ class Html extends Renderer {
     }
 
     if ($this->options['detail'] || $percent != 100) {
-      foreach ($report->getCheckObjects() as $check) {
+      foreach ($checklist->getCheckObjects() as $check) {
         $checkBuild = [];
         $score = $check->getScore();
         if (
@@ -354,7 +357,7 @@ class Html extends Renderer {
    * Render the results as a table.
    */
   public function table($element) {
-    return render($element);
+    return \Drupal::service('renderer')->render($element);
   }
 
   /**
@@ -368,7 +371,7 @@ class Html extends Renderer {
    * Provide the bootstrap derived styles.
    */
   private function getStyles() {
-    $file = drupal_get_path('module', 'site_audit') . '/css/bootstrap-overrides.css';
+    $file = \Drupal::service('extension.list.module')->getPath('site_audit') . '/css/bootstrap-overrides.css';
     $styles = "/* $file */\n" . file_get_contents($file);
     return $styles;
   }

@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "content_enity_types_unused",
  *  name = @Translation("Unused content entity types"),
  *  description = @Translation("Check for unused content entity types"),
- *  report = "content"
+ *  checklist = "content"
  * )
  */
 class ContentEntityTypesUnused extends SiteAuditCheckBase {
@@ -37,12 +37,12 @@ class ContentEntityTypesUnused extends SiteAuditCheckBase {
    * {@inheritdoc}.
    */
   public function getResultWarn() {
-    $report = [];
+    $checklist = [];
     foreach ($this->registry->content_types_unused as $entity_type => $bundle) {
-      $report[] = $entity_type .= ': ' . implode(', ', $bundle);
+      $checklist[] = $entity_type .= ': ' . implode(', ', $bundle);
     }
     return $this->t('The following content entity types are unused: @content_types_unused', [
-      '@content_types_unused' => implode('; ', $report),
+      '@content_types_unused' => implode('; ', $checklist),
     ]);
   }
 

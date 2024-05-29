@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "watchdog_syslog",
  *  name = @Translation("syslog status"),
  *  description = @Translation("Check to see if syslog logging is enabled"),
- *  report = "watchdog",
+ *  checklist = "watchdog",
  *  weight = -10,
  * )
  */

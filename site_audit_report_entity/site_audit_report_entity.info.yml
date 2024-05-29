@@ -1,0 +1,8 @@
+name: Site Audit Report Entity
+type: module
+description: Provides a Site Audit Report entity.
+package: Site Audit
+core_version_requirement: ^9 || ^10
+dependencies:
+  - site_audit
+  - serialization

@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "best_practices_services",
  *  name = @Translation("sites/default/services.yml"),
  *  description = @Translation("Check if a site-specific services.yml file exists."),
- *  report = "best_practices"
+ *  checklist = "best_practices"
  * )
  */
 class BestPracticesServices extends SiteAuditCheckBase {

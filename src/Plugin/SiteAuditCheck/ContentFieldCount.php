@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "content_field_count",
  *  name = @Translation("Field counts"),
  *  description = @Translation("Total number of fields"),
- *  report = "content",
+ *  checklist = "content",
  *  weight = -2,
  * )
  */

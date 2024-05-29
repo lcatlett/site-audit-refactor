@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "extensions_dev",
  *  name = @Translation("Development"),
  *  description = @Translation("Check for enabled development modules."),
- *  report = "extensions"
+ *  checklist = "extensions"
  * )
  */
 class ExtensionsDev extends SiteAuditCheckBase {

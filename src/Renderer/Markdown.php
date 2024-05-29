@@ -14,9 +14,9 @@ class Markdown extends Renderer {
    *
    */
   public function render($detail = FALSE) {
-    $ret_val = '## ' . $this->report->getLabel();
+    $ret_val = '## ' . $this->checklist->getLabel();
 
-    $percent = $this->report->getPercent();
+    $percent = $this->checklist->getPercent();
 
     if ($percent != Check::AUDIT_CHECK_SCORE_INFO) {
       $ret_val .= ': ' . $percent . '%';
@@ -33,7 +33,7 @@ class Markdown extends Renderer {
     }
 
     if ($detail || $percent != 100) {
-      foreach ($this->report->getChecks() as $check) {
+      foreach ($this->checklist->getChecks() as $check) {
         $score = $check->getScore();
         if ($detail || $score < Check::AUDIT_CHECK_SCORE_PASS || $percent == Check::AUDIT_CHECK_SCORE_INFO) {
           // Heading.

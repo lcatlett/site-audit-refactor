@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "cron_enabled",
  *  name = @Translation("Enabled"),
  *  description = @Translation("Check to see if cron is scheduled to run."),
- *  report = "cron"
+ *  checklist = "cron"
  * )
  */
 class CronEnabled extends SiteAuditCheckBase {

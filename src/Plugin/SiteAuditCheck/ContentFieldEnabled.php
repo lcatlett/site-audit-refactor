@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "content_field_enabled",
  *  name = @Translation("Field status"),
  *  description = @Translation("Check to see if enabled"),
- *  report = "content",
+ *  checklist = "content",
  *  weight = -5,
  * )
  */

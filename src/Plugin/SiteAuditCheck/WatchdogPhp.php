@@ -12,7 +12,7 @@ use Drupal\Core\Logger\RfcLogLevel;
  *  id = "watchdog_php",
  *  name = @Translation("PHP messages"),
  *  description = @Translation("Count PHP notices, warnings and errors."),
- *  report = "watchdog",
+ *  checklist = "watchdog",
  *  weight = 0,
  * )
  */

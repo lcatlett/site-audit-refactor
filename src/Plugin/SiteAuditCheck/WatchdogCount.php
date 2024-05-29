@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "watchdog_count",
  *  name = @Translation("Count"),
  *  description = @Translation("Number of dblog entries."),
- *  report = "watchdog",
+ *  checklist = "watchdog",
  *  weight = -3,
  * )
  */

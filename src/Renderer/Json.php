@@ -13,13 +13,13 @@ class Json extends Renderer {
    *
    */
   public function render($detail = FALSE) {
-    $report = [
-      'percent' => $this->report->getPercent(),
-      'label' => $this->report->getLabel(),
+    $checklist = [
+      'percent' => $this->checklist->getPercent(),
+      'label' => $this->checklist->getLabel(),
       'checks' => [],
     ];
-    foreach ($this->report->getCheckObjects() as $check) {
-      $report['checks'][get_class($check)] = [
+    foreach ($this->checklist->getCheckObjects() as $check) {
+      $checklist['checks'][get_class($check)] = [
         'label' => $check->getLabel(),
         'description' => $check->getDescription(),
         'result' => $check->getResult(),
@@ -27,7 +27,7 @@ class Json extends Renderer {
         'score' => $check->getScore(),
       ];
     }
-    return json_encode($report);
+    return json_encode($checklist);
   }
 
 }

@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "security_menu_router",
  *  name = @Translation("Menu Router"),
  *  description = @Translation("Check for potentially malicious entries in the menu router."),
- *  report = "security"
+ *  checklist = "security"
  * )
  */
 class SecurityMenuRouter extends SiteAuditCheckBase {

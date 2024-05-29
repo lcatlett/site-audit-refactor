@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "codebase_sizeall",
  *  name = @Translation("Size of entire site"),
  *  description = @Translation("Determine the size of the site root; does not include remote mounts."),
- *  report = "codebase",
+ *  checklist = "codebase",
  *  weight = -1,
  * )
  */

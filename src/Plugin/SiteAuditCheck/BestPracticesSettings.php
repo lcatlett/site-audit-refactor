@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "best_practices_settings",
  *  name = @Translation("sites/default/settings.php"),
  *  description = @Translation("Check if the configuration file exists."),
- *  report = "best_practices"
+ *  checklist = "best_practices"
  * )
  */
 class BestPracticesSettings extends SiteAuditCheckBase {

@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "views_enabled",
  *  name = @Translation("Views status"),
  *  description = @Translation("Check to see if enabled"),
- *  report = "views",
+ *  checklist = "views",
  *  weight = -5,
  * )
  */

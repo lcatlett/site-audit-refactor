@@ -12,7 +12,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "database_engine",
  *  name = @Translation("Storage Engines"),
  *  description = @Translation("Check to see if there are any tables that aren\'t using InnoDB."),
- *  report = "database"
+ *  checklist = "database"
  * )
  */
 class DatabaseEngine extends SiteAuditCheckBase {
@@ -26,7 +26,7 @@ class DatabaseEngine extends SiteAuditCheckBase {
       $ret_val = '<table class="table table-condensed">';
       $ret_val .= '<thead><tr><th>' . $this->t('Table Name') . '</th><th>' . $this->t('Engine') . '</th></tr></thead>';
       $ret_val .= '<tbody>';
-      foreach ($this->registry->engine_tables as $name => $engine) {
+      foreach (($this->registry->engine_tables ?? []) as $name => $engine) {
         $ret_val .= '<tr>';
         $ret_val .= '<td>' . $name . '</td>';
         $ret_val .= '<td>' . $engine . '</td>';
@@ -37,7 +37,7 @@ class DatabaseEngine extends SiteAuditCheckBase {
     }
     else {
       $ret_val = 'Table Name: Engine' . PHP_EOL;
-      if (!$this->options['json']) {
+      if (empty($this->options['json'])) {
         $ret_val .= str_repeat(' ', 4);
       }
       $ret_val .= '---------------------';
@@ -83,23 +83,28 @@ class DatabaseEngine extends SiteAuditCheckBase {
   /**
    * {@inheritdoc}.
    */
-  public function calculateScore() {
-    $connection = Database::getConnection();
-    $query = \Drupal::database()->select('information_schema.TABLES', 'ist');
-    $query->addField('ist', 'TABLE_NAME', 'name');
-    $query->addField('ist', 'ENGINE', 'engine');
-    $query->condition('ist.ENGINE', 'InnoDB', '<>');
-    $query->condition('ist.table_schema', $connection->getConnectionOptions()['database']);
-    $result = $query->execute();
-    $count = 0;
-    while ($row = $result->fetchAssoc()) {
-      $count++;
-      $this->registry->engine_tables[$row['name']] = $row['engine'];
+  public function calculateScore()
+  {
+    try {
+      $connection = Database::getConnection();
+      $query = \Drupal::database()->select('information_schema.TABLES', 'ist');
+      $query->addField('ist', 'TABLE_NAME', 'name');
+      $query->addField('ist', 'ENGINE', 'engine');
+      $query->condition('ist.ENGINE', 'InnoDB', '<>');
+      $query->condition('ist.table_schema', $connection->getConnectionOptions()['database']);
+      $result = $query->execute();
+      $count = 0;
+      $this->registry->engine_tables = [];
+      while ($row = $result->fetchAssoc()) {
+        $count++;
+        $this->registry->engine_tables[$row['name']] = $row['engine'];
+      }
+      if ($count === 0) {
+        return SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS;
+      }
+      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
+    } catch (\Exception $e) {
+      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
     }
-    if ($count === 0) {
-      return SiteAuditCheckBase::AUDIT_CHECK_SCORE_PASS;
-    }
-    return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
   }
-
 }

@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "extensions_unrecommended",
  *  name = @Translation("Not recommended"),
  *  description = @Translation("Check for unrecommended modules."),
- *  report = "extensions"
+ *  checklist = "extensions"
  * )
  */
 class ExtensionsUnrecommended extends SiteAuditCheckBase {
@@ -86,8 +86,9 @@ class ExtensionsUnrecommended extends SiteAuditCheckBase {
   public function calculateScore() {
     $this->registry->extensions_unrec = [];
     if (!isset($this->registry->extensions)) {
-      $this->checkInvokeCalculateScore('extensions_count');
+      return $this->checkInvokeCalculateScore('extensions_count');
     }
+
     $extension_info = $this->registry->extensions;
     // uasort($extension_info, '_drush_pm_sort_extensions');.
     $unrecommended_extensions = $this->getExtensions();

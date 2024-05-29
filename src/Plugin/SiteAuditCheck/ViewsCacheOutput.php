@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "views_cache_output",
  *  name = @Translation("Rendered output caching"),
  *  description = @Translation("Check to see if raw rendered output is being cached."),
- *  report = "views"
+ *  checklist = "views"
  * )
  */
 class ViewsCacheOutput extends SiteAuditCheckBase {

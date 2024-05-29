@@ -3,6 +3,7 @@
 namespace Drupal\site_audit\Plugin\SiteAuditCheck;
 
 use Drupal\Core\Database\Database;
+use Drupal\Core\Database\DatabaseExceptionWrapper;
 use Drupal\site_audit\Plugin\SiteAuditCheckBase;
 
 /**
@@ -12,7 +13,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "database_size",
  *  name = @Translation("Total size"),
  *  description = @Translation("Determine the size of the database."),
- *  report = "database",
+ *  checklist = "database",
  *  weight = -1,
  * )
  */
@@ -53,8 +54,8 @@ class DatabaseSize extends SiteAuditCheckBase {
    * {@inheritdoc}.
    */
   public function calculateScore() {
-    $connection = Database::getConnection();
     try {
+      $connection = Database::getConnection();
       $query = \Drupal::database()->select('information_schema.TABLES', 'ist');
       $query->addExpression('SUM(ist.data_length + ist.index_length)');
       $query->condition('ist.table_schema', $connection->getConnectionOptions()['database']);
@@ -66,7 +67,7 @@ class DatabaseSize extends SiteAuditCheckBase {
       }
       return SiteAuditCheckBase::AUDIT_CHECK_SCORE_INFO;
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       return SiteAuditCheckBase::AUDIT_CHECK_SCORE_FAIL;
     }
   }

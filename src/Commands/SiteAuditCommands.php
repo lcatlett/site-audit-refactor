@@ -3,7 +3,7 @@
 namespace Drupal\site_audit\Commands;
 
 use Drupal\site_audit\Plugin\SiteAuditCheckManager;
-use Drupal\site_audit\Plugin\SiteAuditReportManager;
+use Drupal\site_audit\Plugin\SiteAuditChecklistManager;
 use Drupal\site_audit\Renderer\Html;
 use Drupal\site_audit\Renderer\Markdown;
 use Drupal\site_audit\Renderer\Json;
@@ -16,17 +16,14 @@ use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
-use Drush\Boot\AutoloaderAwareInterface;
-use Drush\Boot\AutoloaderAwareTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * SiteAudit Drush commandfile.
  */
-class SiteAuditCommands extends DrushCommands implements IOAwareInterface, LoggerAwareInterface, ConfigAwareInterface, CustomEventAwareInterface, AutoloaderAwareInterface {
+class SiteAuditCommands extends DrushCommands implements IOAwareInterface, LoggerAwareInterface, ConfigAwareInterface, CustomEventAwareInterface {
 
   use CustomEventAwareTrait;
-  use AutoloaderAwareTrait;
   use StringTranslationTrait;
 
   /**
@@ -39,28 +36,28 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   /**
    * The Site Audit Report manager.
    *
-   * @var \Drupal\site_audit\Plugin\SiteAuditReportManager
+   * @var \Drupal\site_audit\Plugin\SiteAuditChecklistManager
    */
-  protected $auditReportManager;
+  protected $auditChecklistManager;
 
   /**
    * Constructs the SiteAuditCommands.
    *
    * @param \Drupal\site_audit\Plugin\SiteAuditCheckManager $auditCheckManager
    *   The Site Audit Check manager.
-   * @param \Drupal\site_audit\Plugin\SiteAuditReportManager $auditReportManager
+   * @param \Drupal\site_audit\Plugin\SiteAuditChecklistManager $auditCheckManager
    *   The Site Audit Report manager.
    */
-  public function __construct(SiteAuditCheckManager $auditCheckManager, SiteAuditReportManager $auditReportManager) {
+  public function __construct(SiteAuditCheckManager $auditCheckManager, SiteAuditChecklistManager $auditCheckListManager) {
     parent::__construct();
     $this->auditCheckManager = $auditCheckManager;
-    $this->auditReportManager = $auditReportManager;
+    $this->auditChecklistManager = $auditCheckListManager;
   }
 
   /**
    * Run a Site Audit report.
    *
-   * @param $report
+   * @param $checklist
    *   The particular report to run. Omit this argument to choose from available reports.
    *
    * @option skip
@@ -82,7 +79,7 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
    * @usage audit --skip=block,status
    *  skip the block and status reports
    */
-  public function audit($report, $options = ['skip' => 'none', 'format' => 'text', 'detail' => FALSE, 'bootstrap' => FALSE]) {
+  public function audit($checklist, $options = ['skip' => 'none', 'format' => 'text', 'detail' => FALSE, 'bootstrap' => FALSE]) {
     if ($options['bootstrap']) {
       // Bootstrap implies html.
       $options['format'] = 'html';
@@ -91,47 +88,47 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
 
     $output = $this->output();
     $out = '';
-    $reportDefinitions = $this->auditReportManager->getDefinitions();
+    $checklistDefinitions = $this->auditChecklistManager->getDefinitions();
 
-    $reports = [];
-    if ($report == 'all') {
+    $checklists = [];
+    if ($checklist == 'all') {
       // Run all reports unless it is explicitly skipped.
       $skipped = explode(',', $options['skip']);
-      foreach ($reportDefinitions as $report) {
-        $isSkipped = array_search($report['id'], $skipped);
+      foreach ($checklistDefinitions as $checklist) {
+        $isSkipped = array_search($checklist['id'], $skipped);
         if ($isSkipped === FALSE) {
-          $reports[] = $this->auditReportManager->createInstance($report['id'], $options);
+          $checklists[] = $this->auditChecklistManager->createInstance($checklist['id'], $options);
         }
       }
     }
-    elseif (!empty($report)) {
-      $reports[] = $this->auditReportManager->createInstance($report, $options);
+    elseif (!empty($checklist)) {
+      $checklists[] = $this->auditChecklistManager->createInstance($checklist, $options);
     }
 
     switch ($options['format']) {
       case 'html':
-        $renderer = new Html($reports, $this->logger, $options, $output);
+        $renderer = new Html($checklists, $this->logger, $options, $output);
         $out .= $renderer->render(TRUE);
         break;
 
       case 'json';
-        foreach ($reports as $report) {
-          $renderer = new Json($report, $this->logger, $options, $output);
+        foreach ($checklists as $checklist) {
+          $renderer = new Json($checklist, $this->logger, $options, $output);
           $out .= $renderer->render(TRUE);
         }
         break;
 
       case 'markdown':
-        foreach ($reports as $report) {
-          $renderer = new Markdown($report, $this->logger, $options, $output);
+        foreach ($checklists as $checklist) {
+          $renderer = new Markdown($checklist, $this->logger, $options, $output);
           $out .= $renderer->render(TRUE);
         }
         break;
 
       case 'text':
       default:
-        foreach ($reports as $report) {
-          $renderer = new Console($report, $this->logger, $options, $output);
+        foreach ($checklists as $checklist) {
+          $renderer = new Console($checklist, $this->logger, $options, $output);
           // The Console::renderer() doesn't return anything, it print directly to the console.
           $renderer->render(TRUE);
         }
@@ -190,12 +187,12 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
   public function interactSiteAudit($input, $output) {
     $boot_manager = Drush::bootstrapManager();
     if (empty($input->getArgument('report'))) {
-      $reports = $this->getReports($boot_manager->hasBootstrapped(DRUSH_BOOTSTRAP_DRUPAL_FULL));
+      $checklists = $this->getReports($boot_manager->hasBootstrapped(DRUSH_BOOTSTRAP_DRUPAL_FULL));
       $choices = [
         'all' => $this->interpolate($this->t('All')),
       ];
-      foreach ($reports as $report) {
-        $choices[$report['id']] = $this->interpolate($report['name']);
+      foreach ($checklists as $checklist) {
+        $choices[$checklist['id']] = $this->interpolate($checklist['name']);
       }
       $choice = $this->io()->choice($this->t("Choose a report to run"), $choices, 'all');
       $input->setArgument('report', $choice);
@@ -206,8 +203,8 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
    * Get a list of all the report definitions
    */
   public function getReports($include_bootstrapped_types = FALSE) {
-    $reportDefinitions = $this->auditReportManager->getDefinitions();
-    return $reportDefinitions;
+    $checklistDefinitions = $this->auditChecklistManager->getDefinitions();
+    return $checklistDefinitions;
   }
 
   /**
@@ -228,15 +225,15 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
    * @return \Consolidation\OutputFormatters\StructuredData\RowsOfFields
    */
   public function list() {
-    $reportDefinitions = $this->auditReportManager->getDefinitions();
+    $checklistDefinitions = $this->auditChecklistManager->getDefinitions();
     $checkDefinitions = $this->auditCheckManager->getDefinitions();
     $rows = [];
     $report_id = '';
-    foreach ($reportDefinitions as $report) {
+    foreach ($checklistDefinitions as $report) {
       if ($report_id != $report['id'] && !empty($report_id)) {
         $rows[] = [];
       }
-      $thisReport = $this->auditReportManager->createInstance($report['id']);
+      $thisReport = $this->auditCheckManager->createInstance($report['id']);
       $checks = $thisReport->getChecksList();
       foreach ($checks as $check) {
         $rows[] = [

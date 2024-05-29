@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "content_entity_types",
  *  name = @Translation("Content entity types"),
  *  description = @Translation("Available content entity types and counts"),
- *  report = "content"
+ *  checklist = "content"
  * )
  */
 class ContentEntityTypes extends SiteAuditCheckBase {
@@ -28,7 +28,7 @@ class ContentEntityTypes extends SiteAuditCheckBase {
     $ret_val = '';
 
     if (empty($this->registry->content_entity_type_counts)) {
-      if ($this->options['detail']) {
+      if (!empty($this->options['detail'])) {
         return $this->t('No entities exist.');
       }
       return $ret_val;
@@ -95,6 +95,7 @@ class ContentEntityTypes extends SiteAuditCheckBase {
           foreach ($bundles as $bundle => $info) {
             if (get_class(\Drupal::service('entity_type.manager')->getStorage($entity_type)) != 'Drupal\Core\Entity\ContentEntityNullStorage') {
               $query = \Drupal::entityQuery($entity_type)
+                ->accessCheck(FALSE)
                 ->condition($bundle_column_name, $bundle)
                 ->count();
               $field_count = $query->execute();

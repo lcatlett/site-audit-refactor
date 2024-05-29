@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "block_enabled",
  *  name = @Translation("Block status"),
  *  description = @Translation("Check to see if enabled"),
- *  report = "block"
+ *  checklist = "block"
  * )
  */
 class BlockEnabled extends SiteAuditCheckBase {

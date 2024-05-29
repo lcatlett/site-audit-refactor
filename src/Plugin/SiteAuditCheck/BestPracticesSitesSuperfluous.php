@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "best_practices_sites_superflouous",
  *  name = @Translation("Superfluous files in /sites"),
  *  description = @Translation("Detect unnecessary files."),
- *  report = "best_practices"
+ *  checklist = "best_practices"
  * )
  */
 class BestPracticesSitesSuperfluous extends SiteAuditCheckBase {

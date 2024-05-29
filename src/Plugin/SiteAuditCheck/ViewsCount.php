@@ -12,7 +12,7 @@ use Drupal\views\Views;
  *  id = "views_count",
  *  name = @Translation("Count"),
  *  description = @Translation("Number of enabled Views."),
- *  report = "views",
+ *  checklist = "views",
  *  weight = -1,
  * )
  */

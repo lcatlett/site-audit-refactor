@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "users_count_blocked",
  *  name = @Translation("Count Blocked"),
  *  description = @Translation("Total number of blocked Drupal users."),
- *  report = "users"
+ *  checklist = "users"
  * )
  */
 class UsersCountBlocked extends SiteAuditCheckBase {

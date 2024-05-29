@@ -11,7 +11,7 @@ use Drupal\site_audit\Plugin\SiteAuditCheckBase;
  *  id = "cron_last",
  *  name = @Translation("Last run"),
  *  description = @Translation("Time Cron last executed"),
- *  report = "cron"
+ *  checklist = "cron"
  * )
  */
 class CronLast extends SiteAuditCheckBase {
