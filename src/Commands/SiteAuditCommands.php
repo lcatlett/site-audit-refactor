@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\site_audit\Commands;
+namespace Drush\Commands\site_audit;
 
 use Drupal\site_audit\Plugin\SiteAuditCheckManager;
 use Drupal\site_audit\Plugin\SiteAuditChecklistManager;
@@ -17,6 +17,7 @@ use Robo\Contract\IOAwareInterface;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * SiteAudit Drush commandfile.
@@ -42,16 +43,17 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
 
   /**
    * Constructs the SiteAuditCommands.
-   *
-   * @param \Drupal\site_audit\Plugin\SiteAuditCheckManager $auditCheckManager
-   *   The Site Audit Check manager.
-   * @param \Drupal\site_audit\Plugin\SiteAuditChecklistManager $auditCheckManager
-   *   The Site Audit Report manager.
    */
-  public function __construct(SiteAuditCheckManager $auditCheckManager, SiteAuditChecklistManager $auditCheckListManager) {
+  public function __construct() {
     parent::__construct();
-    $this->auditCheckManager = $auditCheckManager;
-    $this->auditChecklistManager = $auditCheckListManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setContainer(\Symfony\Component\DependencyInjection\ContainerInterface $container) {
+    $this->auditCheckManager = $container->get('plugin.manager.site_audit_check');
+    $this->auditChecklistManager = $container->get('plugin.manager.site_audit_checklist');
   }
 
   /**
@@ -248,6 +250,31 @@ class SiteAuditCommands extends DrushCommands implements IOAwareInterface, Logge
       }
     }
     return new RowsOfFields($rows);
+  }
+
+  /**
+   * @hook pre-command site_audit:audit
+   */
+  public function preAudit(CommandData $commandData) {
+    $this->ensureDrupalBootstrapped();
+  }
+
+  /**
+   * @hook pre-command site_audit:all
+   */
+  public function preAuditAll(CommandData $commandData) {
+    $this->ensureDrupalBootstrapped();
+  }
+
+  /**
+   * Ensure Drupal is bootstrapped before running commands.
+   */
+  protected function ensureDrupalBootstrapped() {
+    $boot_manager = Drush::bootstrapManager();
+    $boot_manager->bootstrapMax();
+    if (!$boot_manager->hasBootstrapped(DRUSH_BOOTSTRAP_DRUPAL_FULL)) {
+      throw new \Exception('Drupal must be bootstrapped to run this command.');
+    }
   }
 
 }
